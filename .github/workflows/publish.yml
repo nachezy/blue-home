@@ -1,0 +1,28 @@
+name: Publish APK
+on:
+  push:
+    branches: [main]
+    paths: ['blue-home.apk', '.github/workflows/publish.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Download and verify APK
+        run: |
+          curl --fail --location --retry 3 "https://raw.githubusercontent.com/$GH_REPO/$SOURCE_SHA/blue-home.apk" -o blue-home.apk
+          echo 'ba55c7b645be4595ef771f8fa10afd51168f8e9e69ae6ca4a6489c57ff13a23d  blue-home.apk' > SHA256.txt
+          sha256sum --check SHA256.txt
+      - name: Publish version 1.0.0
+        run: |
+          if gh release view v1.0.0 --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "Release already exists; leaving it unchanged."
+          else
+            gh release create v1.0.0 blue-home.apk SHA256.txt --repo "$GH_REPO" --target "$SOURCE_SHA" --title "Blue Home 1.0.0" --notes "Minimal blue Android TV launcher with clock, date and application shortcuts. Android 5.0+. APK signature and archive verified; TV runtime testing is pending."
+          fi
