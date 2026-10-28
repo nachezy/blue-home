@@ -17,12 +17,12 @@ jobs:
       - name: Download and verify APK
         run: |
           curl --fail --location --retry 3 "https://raw.githubusercontent.com/$GH_REPO/$SOURCE_SHA/blue-home.apk" -o blue-home.apk
-          echo 'ba55c7b645be4595ef771f8fa10afd51168f8e9e69ae6ca4a6489c57ff13a23d  blue-home.apk' > SHA256.txt
+          echo '381b0d62b8a0d06416dac88d457d5f19584d18fe575e86e976126c61f733a9c2  blue-home.apk' > SHA256.txt
           sha256sum --check SHA256.txt
-      - name: Publish version 1.0.0
+      - name: Publish version 1.2.0
         run: |
-          if gh release view v1.0.0 --repo "$GH_REPO" >/dev/null 2>&1; then
+          if gh release view v1.2.0 --repo "$GH_REPO" >/dev/null 2>&1; then
             echo "Release already exists; leaving it unchanged."
           else
-            gh release create v1.0.0 blue-home.apk SHA256.txt --repo "$GH_REPO" --target "$SOURCE_SHA" --title "Blue Home 1.0.0" --notes "Minimal blue Android TV launcher with clock, date and application shortcuts. Android 5.0+. APK signature and archive verified; TV runtime testing is pending."
+            gh release create v1.2.0 blue-home.apk SHA256.txt --repo "$GH_REPO" --target "$SOURCE_SHA" --title "Blue Home 1.2.0" --notes "Illustrated cats wallpaper; customizable app tiles with installed icons; add, reorder, rename, replace and remove shortcuts; separate AdGuard VPN and RuStore utility buttons. Existing tile assignments are migrated. APK signature, archive and ordering logic verified. Runtime testing on TV is pending."
           fi
